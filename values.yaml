@@ -10,5 +10,5 @@ sriov:
     ip: 172.30.0.120
 
 #gpu:
-#  num: 2
+#  num: 1
 #  drivers: video,compute,utility
