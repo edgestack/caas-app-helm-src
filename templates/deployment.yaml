@@ -1,0 +1,91 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caas-app
+  labels:
+    app: caas-app
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caas-app
+  template:
+    metadata:
+      labels:
+        app: caas-app
+      {{- if .Values.sriov }}
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |-
+          [
+          {{- range $idx, $val := .Values.sriov }}
+          {
+              "name":"{{ $val.network }}",
+              {{- if $val.interface }}
+              "interface": "{{ $val.interface }}",
+              {{- end }}
+              {{- if $val.ip }}
+              "ips": [
+                  "{{ $val.ip }}"
+              ],
+              {{- end }}
+              "namespace":"default"
+           }
+           {{- if gt (len $.Values.sriov) (add1 $idx) }}
+           ,
+           {{- end }}
+           {{- end }}
+           ]
+      {{- end }} 
+    spec:
+      containers:
+      - name: app
+        image: {{ .Values.images.registry }}/{{ .Values.images.repository }}:{{ .Values.images.tag }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        command:
+        - /sbin/init
+        {{- if or (.Values.sriov) (.Values.gpu) }}
+        resources:
+          limits:
+        {{- if .Values.sriov }}
+        {{- range $val := .Values.sriov }}
+            openshift.io/{{ $val.network }}: "1"
+        {{- end }}
+        {{- end }}
+        {{- if .Values.gpu }}
+        {{- if .Values.gpu.num }}
+            nvidia.com/gpu: "{{ .Values.gpu.num }}"
+        {{- end }}
+        {{- end }}
+          requests:
+        {{- if .Values.sriov }}
+        {{- range $val := .Values.sriov }}
+            openshift.io/{{ $val.network }}: "1"
+        {{- end }}
+        {{- end }}
+        {{- if .Values.gpu }}
+        {{- if .Values.gpu.num }}
+            nvidia.com/gpu: "{{ .Values.gpu.num }}"
+        {{- end }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.gpu }}
+        env:
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        {{- if .Values.gpu.drivers }}
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: {{ .Values.gpu.drivers }}
+        {{- end }}
+        {{- end }}
+        securityContext:
+          privileged: true
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      {{- if .Values.gpu }}
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      {{- end }} 

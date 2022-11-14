@@ -1,0 +1,14 @@
+images:
+  registry: docker.io
+  repository: centos/tools
+  tag: latest
+  pullPolicy: IfNotPresent
+
+sriov:
+  - network: mecworker1ens3f1
+    interface: net1
+    ip: 172.30.0.120
+
+#gpu:
+#  num: 2
+#  drivers: video,compute,utility
