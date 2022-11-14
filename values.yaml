@@ -4,10 +4,10 @@ images:
   tag: latest
   pullPolicy: IfNotPresent
 
-sriov:
-  - network: mecworker1ens3f1
-    interface: net1
-    ip: 172.30.0.120
+#sriov:
+#  - network: mecworker1ens3f1
+#    interface: net1
+#    ip: 172.30.0.120
 
 #gpu:
 #  num: 1
