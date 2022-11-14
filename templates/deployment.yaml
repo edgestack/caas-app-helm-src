@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: caas-app
+  name: {{ Release.Name }}-caas-app
   labels:
     app: caas-app
   namespace: {{ .Release.Namespace }}
