@@ -4,17 +4,17 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-caas-app
   labels:
-    app: caas-app
+    app: {{ .Release.Name }}-caas-app
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: caas-app
+      app: {{ .Release.Name }}-caas-app
   template:
     metadata:
       labels:
-        app: caas-app
+        app: {{ .Release.Name }}-caas-app
       {{- if .Values.sriov }}
       annotations:
         k8s.v1.cni.cncf.io/networks: |-

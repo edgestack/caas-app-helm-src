@@ -4,6 +4,12 @@ images:
   tag: latest
   pullPolicy: IfNotPresent
 
+service:
+  type: ClusterIP
+  port: 80
+  ## for nodeport type service specify nodePort value
+  #nodePort: 30888
+
 #sriov:
 #  - network: mecworker1ens3f1
 #    interface: net1
