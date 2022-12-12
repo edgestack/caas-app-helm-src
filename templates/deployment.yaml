@@ -81,6 +81,10 @@ spec:
         {{- end }}
         securityContext:
           privileged: true
+        volumeMounts:
+          - mountPath: /data
+            name: caas-app-data
+            subPath: data
       terminationGracePeriodSeconds: 30
       securityContext: {}
       {{- if .Values.gpu }}
@@ -88,4 +92,12 @@ spec:
       - key: nvidia.com/gpu
         operator: Exists
         effect: NoSchedule
-      {{- end }} 
+      {{- end }}
+      volumes:
+      - name: caas-app-data
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-caas-app-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }} 
