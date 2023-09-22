@@ -42,3 +42,6 @@ persistence:
 #gpu:
 #  num: 1
 #  drivers: video,compute,utility
+
+#node:
+#  name: dev-worker

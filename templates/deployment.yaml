@@ -39,6 +39,10 @@ spec:
            ]
       {{- end }} 
     spec:
+      {{- if .Values.node }}
+      nodeSelector:
+        kubernetes.io/hostname: {{ .Values.node.name }}
+      {{- end }}
       containers:
       - name: app
         image: {{ .Values.images.registry }}/{{ .Values.images.repository }}:{{ .Values.images.tag }}
